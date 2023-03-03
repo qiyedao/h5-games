@@ -155,9 +155,13 @@ window.addEventListener('load', function () {
                 this.width,
                 this.height
             );
-            context.fillStyle = 'black';
-            context.font = '25px Helvetica';
-            context.fillText(this.lives, this.x, this.y);
+            context.save();
+            context.strokeRect(this.x, this.y, 5 * this.lives, 20);
+            for (let i = 0; i < this.lives; i++) {
+                context.fillStyle = 'red';
+                context.fillRect(this.x + 5 * i, this.y, 3, 20);
+            }
+            context.restore();
         }
     }
 
