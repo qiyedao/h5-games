@@ -20,7 +20,7 @@ window.addEventListener('load', function () {
                     this.game.keys.push(e.key);
                 }
                 if (e.key === ' ') {
-                    this.game.player.shootTop();
+                    requestAnimationFrame(this.game.player.shootTop());
                 }
             });
             window.addEventListener('keyup', e => {
@@ -47,6 +47,10 @@ window.addEventListener('load', function () {
             this.x += this.speed;
             if (this.x > this.game.width * 0.8) {
                 this.markedForDeletion = true;
+            }
+            if (this.game.score > 5) {
+                this.width = 35;
+                this.height = 10;
             }
         }
         draw(context) {
@@ -124,27 +128,6 @@ window.addEventListener('load', function () {
             this.markedForDeletion = false;
             this.lives = 5;
             this.score = this.lives;
-        }
-        update() {
-            this.x += this.speedx;
-            if (this.x + this.width < 0) this.markedForDeletion = true;
-        }
-        draw(context) {
-            context.fillStyle = 'red';
-            context.fillRect(this.x, this.y, this.width, this.height);
-            context.fillStyle = 'black';
-            context.font = '25px Helvetica';
-            context.fillText(this.lives, this.x, this.y);
-        }
-    }
-
-    class Angler1 extends Enemy {
-        constructor(game) {
-            super(game);
-            this.width = 228;
-            this.height = 169;
-            this.y = Math.random() * (this.game.height * 0.9 - this.height);
-            this.image = document.getElementById('angler1');
             this.sx = 0;
             this.sy = 0;
 
@@ -152,6 +135,7 @@ window.addEventListener('load', function () {
         }
         update() {
             this.x += this.speedx;
+            if (this.x + this.width < 0) this.markedForDeletion = true;
             if (this.x + this.width < 0) this.markedForDeletion = true;
             if (this.sx < this.maxFrame) {
                 this.sx++;
@@ -177,6 +161,40 @@ window.addEventListener('load', function () {
         }
     }
 
+    class Angler1 extends Enemy {
+        constructor(game) {
+            super(game);
+            this.width = 228;
+            this.height = 169;
+            this.y = Math.random() * (this.game.height * 0.9 - this.height);
+            this.image = document.getElementById('angler1');
+            this.sy = Math.floor(Math.random() * 3);
+        }
+    }
+    class Angler2 extends Enemy {
+        constructor(game) {
+            super(game);
+            this.width = 213;
+            this.height = 165;
+            this.y = Math.random() * (this.game.height * 0.9 - this.height);
+            this.image = document.getElementById('angler2');
+            this.sy = Math.floor(Math.random() * 2);
+            this.lives = 3;
+            this.score = this.lives;
+        }
+    }
+    class LuckyFish extends Enemy {
+        constructor(game) {
+            super(game);
+            this.width = 99;
+            this.height = 95;
+            this.y = Math.random() * (this.game.height * 0.9 - this.height);
+            this.image = document.getElementById('lucky');
+            this.sy = Math.floor(Math.random() * 2);
+            this.lives = 3;
+            this.score = 15;
+        }
+    }
     class Layer {
         constructor(game, image, speedModifier) {
             this.game = game;
@@ -343,7 +361,14 @@ window.addEventListener('load', function () {
             this.background.layer4.draw(context);
         }
         addEnemy() {
-            this.enemies.push(new Angler1(this));
+            const randomSize = Math.random();
+            if (randomSize < 0.3) {
+                this.enemies.push(new Angler1(this));
+            } else if (randomSize < 0.5) {
+                this.enemies.push(new Angler2(this));
+            } else {
+                this.enemies.push(new LuckyFish(this));
+            }
             // console.log(this.enemies);
         }
         checkCollision(rect1, rect2) {
