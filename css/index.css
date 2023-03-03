@@ -16,6 +16,8 @@
 #layer2,
 #layer3,
 #layer4,
-#player {
+#player,
+#angler1,
+#projectile {
     display: none;
 }

@@ -2,7 +2,7 @@ window.addEventListener('load', function () {
     const canvas = document.getElementById('canvas1');
     const ctx = canvas.getContext('2d');
 
-    canvas.width = 500;
+    canvas.width = this.window.innerWidth;
     canvas.height = 500;
 
     class InputHandler {
@@ -35,10 +35,13 @@ window.addEventListener('load', function () {
             this.game = game;
             this.x = x;
             this.y = y;
-            this.width = 10;
-            this.height = 3;
+            this.width = 20;
+            this.height = 6;
             this.speed = 3;
             this.markedForDeletion = false;
+            this.image = document.getElementById('projectile');
+            this.sx = 0;
+            this.sy = 0;
         }
         update() {
             this.x += this.speed;
@@ -47,8 +50,7 @@ window.addEventListener('load', function () {
             }
         }
         draw(context) {
-            context.fillStyle = 'yellow';
-            context.fillRect(this.x, this.y, this.width, this.height);
+            context.drawImage(this.image, this.x, this.y, this.width, this.height);
         }
     }
     class Particle {}
@@ -139,9 +141,39 @@ window.addEventListener('load', function () {
     class Angler1 extends Enemy {
         constructor(game) {
             super(game);
-            this.width = 228 * 0.2;
-            this.height = 169 * 0.2;
+            this.width = 228;
+            this.height = 169;
             this.y = Math.random() * (this.game.height * 0.9 - this.height);
+            this.image = document.getElementById('angler1');
+            this.sx = 0;
+            this.sy = 0;
+
+            this.maxFrame = 39;
+        }
+        update() {
+            this.x += this.speedx;
+            if (this.x + this.width < 0) this.markedForDeletion = true;
+            if (this.sx < this.maxFrame) {
+                this.sx++;
+            } else {
+                this.sx = 0;
+            }
+        }
+        draw(context) {
+            context.drawImage(
+                this.image,
+                this.sx * this.width,
+                this.sy * this.height,
+                this.width,
+                this.height,
+                this.x,
+                this.y,
+                this.width,
+                this.height
+            );
+            context.fillStyle = 'black';
+            context.font = '25px Helvetica';
+            context.fillText(this.lives, this.x, this.y);
         }
     }
 
@@ -254,7 +286,7 @@ window.addEventListener('load', function () {
             this.score = 0;
             this.winningScore = 10;
             this.gameTime = 0;
-            this.timeLimit = 5000;
+            this.timeLimit = 1000 * 60 * 5;
             this.speed = 1;
         }
         update(deltaTime) {
